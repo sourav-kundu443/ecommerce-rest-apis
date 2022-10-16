@@ -3,6 +3,7 @@ import JwtService from "../services/JwtService";
 
 const auth = async (req, res, next) => {
   let authHeader = req.headers.authorization;
+
   if (!authHeader) {
     return next(CustomErrorHandler.unAuthorized());
   }

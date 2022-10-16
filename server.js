@@ -1,11 +1,16 @@
 import express from "express";
 import mongoose from "mongoose";
+import path from "path";
 import { APP_PORT_NUM, DB_URL } from "./config";
 import errorHandler from "./middlewares/errorHandler";
+import routes from "./routes";
 
 const app = express();
 
-import routes from "./routes";
+global.appRoot = path.resolve(__dirname);
+
+// for use of file
+app.use(express.urlencoded({ extended: false }));
 
 app.use(express.json());
 

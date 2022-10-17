@@ -4,5 +4,4 @@ export { default as userDetailsControllers } from "./userData/userDetailsControl
 export { default as refreshControllers } from "./auth/refreshControllers";
 export { default as logoutControllers } from "./auth/logoutControllers";
 
-export { default as createProductControllers } from "./products/createProductControllers";
-export { default as updateProductControllers } from "./products/updateProductControllers";
+export { default as productControllers } from "./products/productControllers";

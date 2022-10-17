@@ -5,8 +5,7 @@ import {
   userDetailsControllers,
   refreshControllers,
   logoutControllers,
-  createProductControllers,
-  updateProductControllers,
+  productControllers,
 } from "../controllers";
 import auth from "../middlewares/auth";
 import admin from "../middlewares/admin";
@@ -19,7 +18,11 @@ router.get(`/userdetails`, auth, userDetailsControllers.singleUserData);
 router.post(`/refresh`, refreshControllers.refresh);
 router.post(`/logout`, auth, logoutControllers.logout);
 
-router.post(`/products`, [auth, admin], createProductControllers.create);
-// router.put(`/products/`, updateProductControllers.updateProduct);
+router.post(`/products`, [auth, admin], productControllers.create);
+router.put(
+  `/products/:productId`,
+  [auth, admin],
+  productControllers.updateProduct
+);
 
 export default router;

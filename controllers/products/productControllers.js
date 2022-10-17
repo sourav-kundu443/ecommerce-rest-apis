@@ -4,6 +4,7 @@ import Joi from "joi";
 import fs from "fs";
 import { CreateProduct } from "../../models";
 import CustomErrorHandler from "../../services/CustomErrorHandler";
+import productSchema from "../../validators/productValidator";
 
 // Multer is a node.js middleware for handling multipart/form-data
 const storage = multer.diskStorage({
@@ -22,24 +23,15 @@ const handleMultipartData = multer({
   limits: { fileSize: 1000000 * 5 }, // 5MB
 }).single("image");
 
-const createProductControllers = {
+const productControllers = {
   async create(req, res, next) {
-    console.log("fff");
     handleMultipartData(req, res, async (err) => {
-      console.log("req", req);
       if (err) {
         return next(CustomErrorHandler.serverError(err.message));
       }
-      console.log(req.file);
       const filePath = req.file.path;
 
       // validate the request
-      const productSchema = Joi.object({
-        name: Joi.string().required(),
-        price: Joi.number().required(),
-        size: Joi.string().required(),
-      });
-
       const { error } = productSchema.validate(req.body);
       if (error) {
         // delete the uploaded file
@@ -69,6 +61,51 @@ const createProductControllers = {
       res.status(201).json(document);
     });
   },
+  async updateProduct(req, res, next) {
+    handleMultipartData(req, res, async (err) => {
+      if (err) {
+        return next(CustomErrorHandler.serverError(err.message));
+      }
+      let filePath;
+      if (req.file) {
+        filePath = req.file.path;
+      }
+
+      // validate the request
+      const { error } = productSchema.validate(req.body);
+      if (error) {
+        // delete the uploaded file
+        if (req.file) {
+          fs.unlink(`${appRoot}/${filePath}`, (err) => {
+            if (err) {
+              return next(CustomErrorHandler.serverError(err.message));
+            }
+          });
+        }
+        return next(error);
+      }
+
+      const { name, price, size } = req.body;
+      let document;
+
+      try {
+        document = await CreateProduct.findOneAndUpdate(
+          { _id: req.params.productId },
+          {
+            name,
+            price,
+            size,
+            ...(req.file && { image: filePath }),
+          },
+          { new: true }
+        );
+      } catch (err) {
+        return next(err);
+      }
+
+      res.status(201).json(document);
+    });
+  },
 };
 
-export default createProductControllers;
+export default productControllers;

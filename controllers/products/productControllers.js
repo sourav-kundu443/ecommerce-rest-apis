@@ -114,13 +114,14 @@ const productControllers = {
       return next(new Error("Nothing to delete!"));
     }
 
-    const imagePath = document.image;
+    const imagePath = document._doc.image;
+    // _doc is used for get only -> uploads\1665941580032-955285349.jpg not -> http://localhost:5000/uploads\\1665941580032-955285349.jpg
     fs.unlink(`${appRoot}/${imagePath}`, (err) => {
       if (err) {
         return next(CustomErrorHandler.serverError(err.message));
       }
+      return res.json(document);
     });
-    res.json(document);
   },
   async getAllProducts(req, res, next) {
     let documents;
@@ -131,6 +132,20 @@ const productControllers = {
       return next(CustomErrorHandler.serverError());
     }
     return res.json(documents);
+  },
+  async getSingleProduct(req, res, next) {
+    let document;
+    try {
+      document = await CreateProduct.findOne({
+        _id: req.params.productId,
+      }).select(`-updatedAt -__v`);
+      if (!document) {
+        return next(new Error("Invalid product id!"));
+      }
+    } catch (err) {
+      return next(CustomErrorHandler.serverError());
+    }
+    return res.json(document);
   },
 };
 

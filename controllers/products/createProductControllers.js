@@ -24,11 +24,13 @@ const handleMultipartData = multer({
 
 const createProductControllers = {
   async create(req, res, next) {
+    console.log("fff");
     handleMultipartData(req, res, async (err) => {
+      console.log("req", req);
       if (err) {
         return next(CustomErrorHandler.serverError(err.message));
       }
-      console.log(req);
+      console.log(req.file);
       const filePath = req.file.path;
 
       // validate the request

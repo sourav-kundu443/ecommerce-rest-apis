@@ -29,5 +29,6 @@ router.delete(
   [auth, admin],
   productControllers.deleteProduct
 );
+router.get(`/products`, productControllers.getAllProducts);
 
 export default router;

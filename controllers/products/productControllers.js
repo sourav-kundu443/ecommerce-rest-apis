@@ -122,6 +122,16 @@ const productControllers = {
     });
     res.json(document);
   },
+  async getAllProducts(req, res, next) {
+    let documents;
+    // for pagination -> use package mongoose-pagination
+    try {
+      documents = await CreateProduct.find().select(`-updatedAt -__v`);
+    } catch (err) {
+      return next(CustomErrorHandler.serverError());
+    }
+    return res.json(documents);
+  },
 };
 
 export default productControllers;

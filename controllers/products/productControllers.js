@@ -106,6 +106,22 @@ const productControllers = {
       res.status(201).json(document);
     });
   },
+  async deleteProduct(req, res, next) {
+    const document = await CreateProduct.findOneAndRemove({
+      _id: req.params.productId,
+    });
+    if (!document) {
+      return next(new Error("Nothing to delete!"));
+    }
+
+    const imagePath = document.image;
+    fs.unlink(`${appRoot}/${imagePath}`, (err) => {
+      if (err) {
+        return next(CustomErrorHandler.serverError(err.message));
+      }
+    });
+    res.json(document);
+  },
 };
 
 export default productControllers;

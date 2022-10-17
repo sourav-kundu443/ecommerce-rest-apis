@@ -24,5 +24,10 @@ router.put(
   [auth, admin],
   productControllers.updateProduct
 );
+router.delete(
+  `/products/:productId`,
+  [auth, admin],
+  productControllers.deleteProduct
+);
 
 export default router;
